@@ -1,11 +1,16 @@
 package com.clases.gateway.service;
 
 import com.clases.gateway.dto.ResponseDTO;
+import com.clases.gateway.repository.FabricGatewayOrg2;
 import com.clases.gateway.utils.Constants;
 import com.clases.gateway.repository.FabricGateway;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.stream.JsonReader;
+import java.io.StringReader;
 import lombok.RequiredArgsConstructor;
 import org.hyperledger.fabric.client.Contract;
 import org.springframework.stereotype.Service;
@@ -17,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 public class LoteService {
 
     public final FabricGateway fabricGateway;
+    public final FabricGatewayOrg2 fabricGatewayOrg2;
 
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -88,7 +94,7 @@ public class LoteService {
 
         ResponseDTO response = new ResponseDTO();
 
-        try (var gateway = fabricGateway.createConnection().connect()) {
+        try (var gateway = fabricGatewayOrg2.createConnection().connect()) {
             var network = gateway.getNetwork(Constants.CHANNEL_NAME);
 
             // Get the smart contract from the network.
@@ -150,8 +156,18 @@ public class LoteService {
     }
 
     private String prettyJson(final String json) {
-        var parsedJson = JsonParser.parseString(json);
+      try {
+        JsonReader reader = new JsonReader(new StringReader(json));
+        reader.setLenient(true);
+        JsonElement parsedJson = JsonParser.parseReader(reader);
         return gson.toJson(parsedJson);
+      } catch (JsonSyntaxException e) {
+        System.err.println("Malformed JSON: " + e.getMessage());
+        return "Malformed JSON: " + e.getMessage();
+      }
+        /*
+        var parsedJson = JsonParser.parseString(json);
+        return gson.toJson(parsedJson);*/
     }
 
 
