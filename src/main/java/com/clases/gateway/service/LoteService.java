@@ -12,6 +12,8 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
 import java.io.StringReader;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.hyperledger.fabric.client.Contract;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LoteService {
 
     public final FabricGateway fabricGateway;
@@ -142,6 +145,11 @@ public class LoteService {
             byte[] result  = contract.submitTransaction("listarLotes");
 
             response.setCode("0");
+            log.info("Byte: {}", result);
+            log.info("StringByte in UTF8: {} ", new String(result, StandardCharsets.UTF_8));
+            log.info("parsedJson: {}", JsonParser.parseString(new String(result, StandardCharsets.UTF_8)));
+            log.info("gson to Json: {} ", gson.toJson(JsonParser.parseString(new String(result, StandardCharsets.UTF_8))));
+            
             response.setData(prettyJson(result));
         } catch (Exception e) {
             response.setCode("1");
@@ -159,7 +167,7 @@ public class LoteService {
       try {
         JsonReader reader = new JsonReader(new StringReader(json));
         reader.setLenient(true);
-        JsonElement parsedJson = JsonParser.parseReader(reader);
+        var parsedJson = JsonParser.parseReader(reader);
         return gson.toJson(parsedJson);
       } catch (JsonSyntaxException e) {
         System.err.println("Malformed JSON: " + e.getMessage());
