@@ -11,6 +11,6 @@ Unión del front-end con la red de fabric
 ## <pre>            SERVICE
 -[LoteService.java](https://github.com/AkilinoGit/backendBSM/blob/main/src/main/java/com/clases/gateway/service/LoteService.java)
 ## <pre>            CONSTANTS
--[Constants.java](https://github.com/AkilinoGit/backendBSM/blob/main/src/main/java/com/clases/gateway/utils/Constants.java)7
+-[Constants.java](https://github.com/AkilinoGit/backendBSM/blob/main/src/main/java/com/clases/gateway/utils/Constants.java)
 Clase que almacena las direcciones y los puertos de cada elemento de la red
 
