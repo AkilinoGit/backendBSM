@@ -2,6 +2,7 @@ package com.clases.gateway.service;
 
 import com.clases.gateway.dto.ResponseDTO;
 import com.clases.gateway.repository.FabricGatewayOrg2;
+import com.clases.gateway.repository.FabricGatewayOrg3;
 import com.clases.gateway.utils.Constants;
 import com.clases.gateway.repository.FabricGateway;
 import com.google.gson.Gson;
@@ -26,6 +27,8 @@ public class LoteService {
 
     public final FabricGateway fabricGateway;
     public final FabricGatewayOrg2 fabricGatewayOrg2;
+    public final FabricGatewayOrg3 fabricGatewayOrg3;
+
 
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -72,26 +75,7 @@ public class LoteService {
         return response;
     }
 
-    public ResponseDTO loteVendido(final String loteId) {
 
-        ResponseDTO response = new ResponseDTO();
-
-        try (var gateway = fabricGateway.createConnection().connect()) {
-            var network = gateway.getNetwork(Constants.CHANNEL_NAME);
-
-            // Get the smart contract from the network.
-            Contract contract = network.getContract(Constants.CHAINCODE_LOTE_NAME);
-            contract.submitTransaction("loteVendido", loteId);
-
-            response.setCode("0");
-            response.setData("Lote vendido");
-        } catch (Exception e) {
-            response.setCode("1");
-            response.setData(e.getMessage());
-        }
-
-        return response;
-    }
 
     public ResponseDTO transportarLote(final String loteId, final String km) {
 
@@ -116,7 +100,7 @@ public class LoteService {
     public ResponseDTO venderLote(final String loteId, final String precioKg){
       ResponseDTO response = new ResponseDTO();
 
-      try (var gateway = fabricGateway.createConnection().connect()) {
+      try (var gateway = fabricGatewayOrg3.createConnection().connect()) {
         var network= gateway.getNetwork(Constants.CHANNEL_NAME);
 
         Contract contract = network.getContract(Constants.CHAINCODE_LOTE_NAME);
@@ -132,6 +116,26 @@ public class LoteService {
 
       return response;
     }
+  public ResponseDTO loteVendido(final String loteId) {
+
+    ResponseDTO response = new ResponseDTO();
+
+    try (var gateway = fabricGatewayOrg3.createConnection().connect()) {
+      var network = gateway.getNetwork(Constants.CHANNEL_NAME);
+
+      // Get the smart contract from the network.
+      Contract contract = network.getContract(Constants.CHAINCODE_LOTE_NAME);
+      contract.submitTransaction("loteVendido", loteId);
+
+      response.setCode("0");
+      response.setData("Lote vendido");
+    } catch (Exception e) {
+      response.setCode("1");
+      response.setData(e.getMessage());
+    }
+
+    return response;
+  }
 
     public ResponseDTO listarLotes() {
 
@@ -165,10 +169,7 @@ public class LoteService {
 
     private String prettyJson(final String json) {
       try {
-        JsonReader reader = new JsonReader(new StringReader(json));
-        reader.setLenient(true);
-        var parsedJson = JsonParser.parseReader(reader);
-        return gson.toJson(parsedJson);
+        return  gson.toJson(JsonParser.parseString(json).toString());
       } catch (JsonSyntaxException e) {
         System.err.println("Malformed JSON: " + e.getMessage());
         return "Malformed JSON: " + e.getMessage();

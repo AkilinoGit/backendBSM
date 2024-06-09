@@ -34,4 +34,14 @@ public final class Constants {
   public static final String PEER_ENDPOINT_ORG2 = "localhost:9051";
   public static final String OVERRIDE_AUTH_ORG2 = "peer0.org2.example.com";;
 
+  //ORGANIZATION 3
+  public static final String MSP_ID_ORG3 = "Org3MSP";;
+  public static final Path CRYPTO_PATH_ORG3 = Paths.get("./organizations/peerOrganizations/org3.example.com");
+  public static final Path KEY_DIR_PATH_ORG3 = CRYPTO_PATH_ORG3.resolve(Paths.get("users/User1@org3.example.com/msp/keystore"));;
+  public static final Path CERT_PATH_ORG3 = CRYPTO_PATH_ORG3.resolve(Paths.get("users/User1@org3.example.com/msp/signcerts/User1@org3.example.com-cert.pem"));;
+  public static final Path TLS_CERT_PATH_ORG3 = CRYPTO_PATH_ORG3.resolve(Paths.get("peers/peer0.org3.example.com/tls/ca.crt"));
+
+  public static final String PEER_ENDPOINT_ORG3 = "localhost:11051";
+  public static final String OVERRIDE_AUTH_ORG3 = "peer0.org3.example.com";
+
 }
